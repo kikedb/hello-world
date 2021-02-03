@@ -1,7 +1,20 @@
 import React, {Component } from 'react';
+import P from './P';
 
+const validate = values => {
+    const errors = {}
+    if (!values.nombre) {
+        errors.nombre = 'Este campo es obligarorio'
+    }
+    if (!values.apellido) {
+        errors.apellido = 'Este campo es obligarorio'
+    }
+    return errors
+}
 export default class FormularioSimple extends Component {
-    state = {}
+    state = {
+        errors: {}
+    }
 
     handleChange = ({target}) => {
         const {name, value} = target
@@ -9,15 +22,23 @@ export default class FormularioSimple extends Component {
     }
     handleSubmit = e => {
         e.preventDefault()
-        console.log('prevenido');
+        const { errors, ...sinErrors} = this.state
+        const result = validate(sinErrors)
+        this.setState({ errors:result })
+        if (!Object.keys(result).length) {
+            // Enviar el formulario
+            console.log('Formulario valido');
+        }
     }
 
     render() {
-        console.log(this.state);
+        const { errors } = this.state
         return (
             <form onSubmit={this.handleSubmit}>
                 <input name="nombre" onChange={this.handleChange}/>
+                { errors.nombre && <P>{ errors.nombre }</P>}
                 <input name="apellido" onChange={this.handleChange}/>
+                { errors.apellido && <P>{ errors.apellido }</P>}
                 <input type="submit" value="Enviar"/>
             </form>
         )
